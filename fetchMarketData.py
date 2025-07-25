@@ -137,7 +137,18 @@ async def main():
         type_id = 34
         logger.info("Starting EVE market data analysis")
         
-        orders = await fetch_market_orders(type_id=type_id)
+        # Fetch both buy and sell orders
+        sell_orders = await fetch_market_orders(type_id=type_id, order_type="sell")
+        buy_orders = await fetch_market_orders(type_id=type_id, order_type="buy")
+        
+        # Add order_type field to each order
+        for order in sell_orders:
+            order['order_type'] = 'sell'
+        for order in buy_orders:
+            order['order_type'] = 'buy'
+        
+        # Combine all orders
+        orders = sell_orders + buy_orders
         df = pd.DataFrame(orders)
         
         if df.empty:
