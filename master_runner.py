@@ -51,7 +51,7 @@ class EVETradingMaster:
             print(f"  {i}. {component}: {description}")
         print("=" * 60)
     
-    async def run_fetch_data(self, type_id: int = 34, item_name: str = "Tritanium"):
+    async def run_fetch_data(self, type_id: int = 34, item_name: str = "Tritanium", **kwargs):
         """Run data fetching component."""
         print(f"📡 Fetching market data for {item_name} (ID: {type_id})...")
         await fetch_data_main()
