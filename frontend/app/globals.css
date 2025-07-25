@@ -1,0 +1,73 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url("https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap");
+
+@layer base {
+  html {
+    font-family: "Inter", sans-serif;
+  }
+
+  body {
+    @apply bg-eve-dark text-eve-light;
+  }
+}
+
+@layer components {
+  .eve-card {
+    @apply bg-eve-secondary border border-eve-accent rounded-lg p-4 shadow-lg;
+  }
+
+  .eve-button {
+    @apply bg-eve-accent hover:bg-eve-highlight text-white font-semibold py-2 px-4 rounded transition-all duration-200;
+  }
+
+  .eve-button-success {
+    @apply bg-eve-success hover:bg-green-400 text-eve-dark font-semibold py-2 px-4 rounded transition-all duration-200;
+  }
+
+  .eve-button-warning {
+    @apply bg-eve-warning hover:bg-yellow-400 text-eve-dark font-semibold py-2 px-4 rounded transition-all duration-200;
+  }
+
+  .eve-button-danger {
+    @apply bg-eve-danger hover:bg-red-400 text-white font-semibold py-2 px-4 rounded transition-all duration-200;
+  }
+
+  .eve-input {
+    @apply bg-eve-secondary border border-eve-accent text-eve-light rounded px-3 py-2 focus:outline-none focus:border-eve-highlight;
+  }
+
+  .eve-table {
+    @apply w-full text-sm text-left text-eve-light;
+  }
+
+  .eve-table th {
+    @apply px-6 py-3 bg-eve-accent text-eve-light font-semibold;
+  }
+
+  .eve-table td {
+    @apply px-6 py-4 border-b border-eve-accent;
+  }
+
+  .eve-table tr:hover {
+    @apply bg-eve-secondary;
+  }
+
+  .profit-positive {
+    @apply text-eve-success;
+  }
+
+  .profit-negative {
+    @apply text-eve-danger;
+  }
+
+  .profit-neutral {
+    @apply text-eve-warning;
+  }
+
+  .glow-effect {
+    animation: glow 2s ease-in-out infinite alternate;
+  }
+}

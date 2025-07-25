@@ -4,11 +4,14 @@ Simple web dashboard for EVE Market Data visualization.
 This provides a web interface to view the generated charts and market data.
 """
 
-from flask import Flask, render_template_string, send_from_directory
+from flask import Flask, render_template_string, send_from_directory, request, jsonify
 import os
 import glob
 from datetime import datetime
 import json
+import asyncio
+from local_market_analyzer import LocalMarketAnalyzer
+from jump_planner import JumpPlanner
 
 app = Flask(__name__)
 
@@ -229,6 +232,229 @@ def api_charts():
     """API endpoint to get chart information."""
     charts = get_chart_files()
     return {'charts': charts}
+
+@app.route('/api/system-analysis')
+def api_system_analysis():
+    """API endpoint to get system analysis data"""
+    try:
+        system_name = request.args.get('system_name', 'Jita')
+        
+        # Run system analysis
+        async def run_analysis():
+            async with LocalMarketAnalyzer(system_name) as analyzer:
+                analysis = await analyzer.analyze_local_market(max_items=25)
+                return {
+                    'system_name': analysis.system_name,
+                    'total_opportunities': analysis.total_opportunities,
+                    'avg_profit_margin': analysis.avg_profit_margin,
+                    'market_health': analysis.market_health,
+                    'competition_level': analysis.competition_level,
+                    'best_opportunities': [
+                        {
+                            'type_id': o.type_id,
+                            'item_name': o.item_name,
+                            'current_buy_price': o.current_buy_price,
+                            'current_sell_price': o.current_sell_price,
+                            'profit_margin': o.profit_margin,
+                            'volume_available': o.volume_available,
+                            'competition_count': o.competition_count,
+                            'local_demand': o.local_demand,
+                            'local_supply': o.local_supply,
+                            'opportunity_type': o.opportunity_type,
+                            'score': o.score,
+                            'recommendation': o.recommendation,
+                            'action_plan': o.action_plan
+                        }
+                        for o in analysis.best_opportunities
+                    ],
+                    'strategic_recommendations': analysis.strategic_recommendations
+                }
+        
+        # Run the async function
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+        result = loop.run_until_complete(run_analysis())
+        loop.close()
+        
+        return jsonify({
+            'success': True,
+            'data': result
+        })
+        
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'message': f'Error analyzing system: {str(e)}'
+        }), 500
+
+@app.route('/api/market-data')
+def api_market_data():
+    """API endpoint to get market data"""
+    try:
+        # Mock market data for now
+        market_data = [
+            {
+                'type_id': 34,
+                'item_name': 'Tritanium',
+                'current_price': 5.2,
+                'price_change': 2.5,
+                'volume_24h': 1000000,
+                'profit_margin': 15.3,
+                'recommendation': 'BUY'
+            },
+            {
+                'type_id': 35,
+                'item_name': 'Pyerite',
+                'current_price': 8.1,
+                'price_change': -1.2,
+                'volume_24h': 800000,
+                'profit_margin': 8.7,
+                'recommendation': 'HOLD'
+            }
+        ]
+        
+        return jsonify({
+            'success': True,
+            'data': market_data
+        })
+        
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'message': f'Error fetching market data: {str(e)}'
+        }), 500
+
+@app.route('/api/trading-signals')
+def api_trading_signals():
+    """API endpoint to get trading signals"""
+    try:
+        # Mock trading signals for now
+        trading_signals = [
+            {
+                'timestamp': datetime.now().isoformat(),
+                'type_id': 36,
+                'item_name': 'Mexallon',
+                'action': 'BUY',
+                'confidence': 0.85,
+                'price': 12.5
+            }
+        ]
+        
+        return jsonify({
+            'success': True,
+            'data': trading_signals
+        })
+        
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'message': f'Error fetching trading signals: {str(e)}'
+        }), 500
+
+@app.route('/api/portfolio')
+def api_portfolio():
+    """API endpoint to get portfolio data"""
+    try:
+        # Mock portfolio data for now
+        portfolio_data = [
+            {
+                'type_id': 34,
+                'item_name': 'Tritanium',
+                'quantity': 100000,
+                'avg_price': 4.8,
+                'current_price': 5.2,
+                'unrealized_pnl': 40000,
+                'unrealized_pnl_pct': 8.33
+            }
+        ]
+        
+        return jsonify({
+            'success': True,
+            'data': portfolio_data
+        })
+        
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'message': f'Error fetching portfolio data: {str(e)}'
+        }), 500
+
+@app.route('/api/health')
+def api_health():
+    """API endpoint to check system health"""
+    return jsonify({
+        'success': True,
+        'status': 'healthy',
+        'timestamp': datetime.now().isoformat()
+    })
+
+@app.route('/api/jump-planning')
+def api_jump_planning():
+    """API endpoint to get jump planning analysis"""
+    try:
+        origin = request.args.get('origin', 'Jita')
+        destination = request.args.get('destination', 'Amarr')
+        cargo_volume = float(request.args.get('cargo_volume', 500000))
+        item_name = request.args.get('item_name', 'Warrior II')
+        quantity = int(request.args.get('quantity', 1000))
+        buy_price = float(request.args.get('buy_price', 4050))
+        sell_price = float(request.args.get('sell_price', 5000))
+        
+        planner = JumpPlanner()
+        
+        # Get route analysis
+        routes = planner.get_ship_comparison(origin, destination, cargo_volume)
+        
+        # Get transport efficiency
+        efficiency = planner.analyze_transport_efficiency(
+            item_name=item_name,
+            quantity=quantity,
+            buy_price=buy_price,
+            sell_price=sell_price,
+            origin=origin,
+            destination=destination
+        )
+        
+        return jsonify({
+            'success': True,
+            'data': {
+                'origin': origin,
+                'destination': destination,
+                'cargo_volume': cargo_volume,
+                'distance': planner.get_distance(origin, destination),
+                'routes': [
+                    {
+                        'ship_type': route.ship_type,
+                        'jumps_required': route.jumps_required,
+                        'fuel_cost': route.fuel_cost,
+                        'insurance_cost': route.insurance_cost,
+                        'total_cost': route.total_cost,
+                        'cost_per_m3': route.cost_per_m3,
+                        'estimated_time': route.estimated_time,
+                        'security_route': route.security_route
+                    }
+                    for route in routes
+                ],
+                'efficiency': {
+                    'item_name': efficiency.item_name,
+                    'quantity': efficiency.quantity,
+                    'total_volume': efficiency.total_volume,
+                    'buy_price': efficiency.buy_price,
+                    'sell_price': efficiency.sell_price,
+                    'gross_profit': efficiency.gross_profit,
+                    'transport_cost': efficiency.transport_cost,
+                    'net_profit': efficiency.net_profit,
+                    'profit_margin': efficiency.profit_margin,
+                    'recommended_ship': efficiency.recommended_ship
+                }
+            }
+        })
+        
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'message': f'Error analyzing jump planning: {str(e)}'
+        }), 500
 
 if __name__ == '__main__':
     print("🌐 Starting EVE Market Dashboard...")

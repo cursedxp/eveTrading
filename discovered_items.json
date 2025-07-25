@@ -1,0 +1,302 @@
+[
+  {
+    "type_id": 3651,
+    "name": "Unknown",
+    "category": "Unknown",
+    "volume_24h": 6160,
+    "avg_price": 150.505,
+    "price_change_24h": 0.05,
+    "profit_margin": 296.029702970297,
+    "score": 118.74668118811881
+  },
+  {
+    "type_id": 5233,
+    "name": "Unknown",
+    "category": "Unknown",
+    "volume_24h": 5,
+    "avg_price": 486080000.0,
+    "price_change_24h": 0.05,
+    "profit_margin": 70.76646706586827,
+    "score": 28.45673682634731
+  },
+  {
+    "type_id": 22923,
+    "name": "Unknown",
+    "category": "Unknown",
+    "volume_24h": 1000187,
+    "avg_price": 30556500.0,
+    "price_change_24h": 0.05,
+    "profit_margin": 8.810719971696445,
+    "score": 3.974287988678578
+  },
+  {
+    "type_id": 17547,
+    "name": "Unknown",
+    "category": "Unknown",
+    "volume_24h": 25,
+    "avg_price": 235600000.0,
+    "price_change_24h": 0.05,
+    "profit_margin": 4.463648834019204,
+    "score": 1.9362095336076817
+  },
+  {
+    "type_id": 12108,
+    "name": "Unknown",
+    "category": "Unknown",
+    "volume_24h": 102484,
+    "avg_price": 717300.0,
+    "price_change_24h": 0.05,
+    "profit_margin": 2.28750747160789,
+    "score": 1.3650029886431558
+  },
+  {
+    "type_id": 4569,
+    "name": "Unknown",
+    "category": "Unknown",
+    "volume_24h": 13731,
+    "avg_price": 39740.0,
+    "price_change_24h": 0.05,
+    "profit_margin": 1.71575502571295,
+    "score": 1.13630201028518
+  },
+  {
+    "type_id": 21841,
+    "name": "Unknown",
+    "category": "Unknown",
+    "volume_24h": 14437,
+    "avg_price": 13713.0,
+    "price_change_24h": 0.05,
+    "profit_margin": 1.64416688812118,
+    "score": 1.107666755248472
+  },
+  {
+    "type_id": 15745,
+    "name": "Unknown",
+    "category": "Unknown",
+    "volume_24h": 29,
+    "avg_price": 166455000.0,
+    "price_change_24h": 0.05,
+    "profit_margin": 2.379818444941455,
+    "score": 1.102797377976582
+  },
+  {
+    "type_id": 25542,
+    "name": "Unknown",
+    "category": "Unknown",
+    "volume_24h": 120,
+    "avg_price": 202100000.0,
+    "price_change_24h": 0.05,
+    "profit_margin": 1.1652310101801095,
+    "score": 0.6196924040720438
+  },
+  {
+    "type_id": 14848,
+    "name": "Unknown",
+    "category": "Unknown",
+    "volume_24h": 4,
+    "avg_price": 649000000.0,
+    "price_change_24h": 0.05,
+    "profit_margin": 1.1428571428571428,
+    "score": 0.6072628571428571
+  },
+  {
+    "type_id": 483,
+    "name": "Unknown",
+    "category": "Unknown",
+    "volume_24h": 85921,
+    "avg_price": 13560.0,
+    "price_change_24h": 0.05,
+    "profit_margin": 0.2376237623762376,
+    "score": 0.5450495049504951
+  },
+  {
+    "type_id": 18068,
+    "name": "Unknown",
+    "category": "Unknown",
+    "volume_24h": 101903,
+    "avg_price": 2361000.0,
+    "price_change_24h": 0.05,
+    "profit_margin": 0.17603686635944701,
+    "score": 0.5204147465437788
+  },
+  {
+    "type_id": 28750,
+    "name": "Unknown",
+    "category": "Unknown",
+    "volume_24h": 100141,
+    "avg_price": 182850000.0,
+    "price_change_24h": 0.05,
+    "profit_margin": 0.1524426133019423,
+    "score": 0.5109770453207769
+  },
+  {
+    "type_id": 28752,
+    "name": "Unknown",
+    "category": "Unknown",
+    "volume_24h": 1000213,
+    "avg_price": 195250000.0,
+    "price_change_24h": 0.05,
+    "profit_margin": 0.12574850299401197,
+    "score": 0.5002994011976047
+  },
+  {
+    "type_id": 28353,
+    "name": "Unknown",
+    "category": "Unknown",
+    "volume_24h": 1016,
+    "avg_price": 2797000000.0,
+    "price_change_24h": 0.05,
+    "profit_margin": 0.7956021989005497,
+    "score": 0.49872087956021993
+  },
+  {
+    "type_id": 28748,
+    "name": "Unknown",
+    "category": "Unknown",
+    "volume_24h": 1000136,
+    "avg_price": 115100000.0,
+    "price_change_24h": 0.05,
+    "profit_margin": 0.10805860805860806,
+    "score": 0.49322344322344325
+  },
+  {
+    "type_id": 16274,
+    "name": "Unknown",
+    "category": "Unknown",
+    "volume_24h": 355530436,
+    "avg_price": 1014.55,
+    "price_change_24h": 0.05,
+    "profit_margin": 0.10247642731323177,
+    "score": 0.49099057092529275
+  },
+  {
+    "type_id": 28788,
+    "name": "Unknown",
+    "category": "Unknown",
+    "volume_24h": 1000156,
+    "avg_price": 112850000.0,
+    "price_change_24h": 0.05,
+    "profit_margin": 0.06684981684981685,
+    "score": 0.4767399267399267
+  },
+  {
+    "type_id": 17888,
+    "name": "Unknown",
+    "category": "Unknown",
+    "volume_24h": 282668313,
+    "avg_price": 926.55,
+    "price_change_24h": 0.05,
+    "profit_margin": 0.05854254610086639,
+    "score": 0.47341701844034656
+  },
+  {
+    "type_id": 17889,
+    "name": "Unknown",
+    "category": "Unknown",
+    "volume_24h": 381328112,
+    "avg_price": 764.3,
+    "price_change_24h": 0.05,
+    "profit_margin": 0.04741494776319311,
+    "score": 0.46896597910527726
+  },
+  {
+    "type_id": 16275,
+    "name": "Unknown",
+    "category": "Unknown",
+    "volume_24h": 12497097,
+    "avg_price": 4622.5,
+    "price_change_24h": 0.05,
+    "profit_margin": 0.04354553492484527,
+    "score": 0.4674182139699381
+  },
+  {
+    "type_id": 482,
+    "name": "Unknown",
+    "category": "Unknown",
+    "volume_24h": 11565,
+    "avg_price": 671400.0,
+    "price_change_24h": 0.05,
+    "profit_margin": 0.02962515114873035,
+    "score": 0.4618500604594922
+  },
+  {
+    "type_id": 16273,
+    "name": "Unknown",
+    "category": "Unknown",
+    "volume_24h": 330849991,
+    "avg_price": 126.7,
+    "price_change_24h": 0.05,
+    "profit_margin": 0.027200000000000047,
+    "score": 0.46087999999999996
+  },
+  {
+    "type_id": 28754,
+    "name": "Unknown",
+    "category": "Unknown",
+    "volume_24h": 1000532,
+    "avg_price": 190500000.0,
+    "price_change_24h": 0.05,
+    "profit_margin": 0.02014846235418876,
+    "score": 0.45805938494167553
+  },
+  {
+    "type_id": 17887,
+    "name": "Unknown",
+    "category": "Unknown",
+    "volume_24h": 334860166,
+    "avg_price": 891.05,
+    "price_change_24h": 0.05,
+    "profit_margin": 0.00011223344556680442,
+    "score": 0.45004489337822673
+  },
+  {
+    "type_id": 15744,
+    "name": "Unknown",
+    "category": "Unknown",
+    "volume_24h": 151,
+    "avg_price": 4400000.0,
+    "price_change_24h": 0.05,
+    "profit_margin": 0.7127003699136868,
+    "score": 0.4396101479654747
+  },
+  {
+    "type_id": 16272,
+    "name": "Unknown",
+    "category": "Unknown",
+    "volume_24h": 573728785,
+    "avg_price": 117.0,
+    "price_change_24h": 0.05,
+    "profit_margin": -0.03361344537815126,
+    "score": 0.4365546218487395
+  },
+  {
+    "type_id": 13958,
+    "name": "Unknown",
+    "category": "Unknown",
+    "volume_24h": 28,
+    "avg_price": 51525000.0,
+    "price_change_24h": 0.05,
+    "profit_margin": 0.7047244094488189,
+    "score": 0.43272976377952754
+  },
+  {
+    "type_id": 13963,
+    "name": "Unknown",
+    "category": "Unknown",
+    "volume_24h": 214,
+    "avg_price": 15575000.0,
+    "price_change_24h": 0.05,
+    "profit_margin": 0.6715265866209262,
+    "score": 0.42503063464837043
+  },
+  {
+    "type_id": 19013,
+    "name": "Unknown",
+    "category": "Unknown",
+    "volume_24h": 63,
+    "avg_price": 24960000.0,
+    "price_change_24h": 0.05,
+    "profit_margin": 0.6595631326584976,
+    "score": 0.41571525306339907
+  }
+]

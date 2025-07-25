@@ -22,6 +22,11 @@ from market_monitor import MarketMonitor
 from portfolio_manager import PortfolioManager
 from trading_system import IntegratedTradingSystem
 from database_simple import SimpleDatabaseManager
+from profitable_item_finder import ProfitableItemFinder
+from dynamic_item_discovery import DynamicItemDiscovery
+from system_trading_analyzer import SystemTradingAnalyzer
+from local_market_analyzer import LocalMarketAnalyzer
+from jump_planner import JumpPlanner
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
@@ -38,7 +43,12 @@ class EVETradingMaster:
             'market_monitor': 'Start real-time market monitoring',
             'portfolio': 'Portfolio management demo',
             'trading_system': 'Run integrated trading system',
-            'db_stats': 'Show database statistics'
+            'db_stats': 'Show database statistics',
+            'find_profitable': 'Find most profitable items to trade',
+            'discover_items': 'Discover new profitable items using ESI API',
+            'system_trading': 'Analyze trading opportunities in specific EVE systems',
+            'local_market': 'Become the most profitable trader in your system',
+            'jump_planning': 'Jump planning and transport efficiency analysis'
         }
     
     def print_banner(self):
@@ -126,6 +136,139 @@ class EVETradingMaster:
         
         from portfolio_manager import main as portfolio_main
         portfolio_main()
+    
+    async def run_profitable_finder(self, max_items: int = 15, **kwargs):
+        """Run profitable item finder."""
+        print("🔍 Finding most profitable items to trade...")
+        
+        async with ProfitableItemFinder() as finder:
+            analyses = await finder.find_profitable_items(max_items=max_items)
+            finder.display_analysis_results(top_n=10)
+            finder.export_analysis_to_csv()
+            
+            best_opportunities = finder.get_best_trading_opportunities(min_score=0.5)
+            print(f"\n🎯 Best Trading Opportunities (Score >= 0.5): {len(best_opportunities)} items")
+            
+            for analysis in best_opportunities[:5]:
+                print(f"- {analysis.item_name}: {analysis.recommendation} (Score: {analysis.overall_score:.2f})")
+        
+        print("✅ Profitable item analysis completed")
+    
+    async def run_dynamic_discovery(self, min_score: float = 0.4, max_items: int = 30, **kwargs):
+        """Run dynamic item discovery using ESI API."""
+        print("🔍 Discovering new profitable items using ESI API...")
+        
+        async with DynamicItemDiscovery() as discoverer:
+            # Discover profitable items
+            items = await discoverer.discover_profitable_items(min_score=min_score, max_items=max_items)
+            
+            if items:
+                # Display results
+                discoverer.display_discovered_items(items, top_n=15)
+                
+                # Export results
+                discoverer.export_discovered_items(items)
+                
+                # Update database
+                results = await discoverer.update_database_with_discovered_items(items)
+                
+                print("\n📊 Database Update Results:")
+                for item_name, count in results.items():
+                    status = "✅ Success" if count > 0 else "❌ Failed"
+                    print(f"  {item_name}: {count} orders ({status})")
+                
+                print(f"\n🎯 Discovered {len(items)} new profitable items!")
+            else:
+                print("No new profitable items discovered.")
+        
+        print("✅ Dynamic item discovery completed")
+    
+    async def run_system_trading_analysis(self, system_id: int = 60003760, max_items: int = 30, **kwargs):
+        """Run system-based trading analysis."""
+        print(f"🎯 Analyzing trading opportunities in system {system_id}...")
+        
+        async with SystemTradingAnalyzer(system_id) as analyzer:
+            analysis = await analyzer.analyze_system_opportunities(max_items=max_items)
+            analyzer.display_system_analysis(analysis)
+            analyzer.export_system_analysis(analysis)
+            
+            print(f"\n🎯 System Analysis Complete!")
+            print(f"📊 Found {analysis.total_opportunities} opportunities in {analysis.system_name}")
+            print(f"💰 Average profit margin: {analysis.avg_profit_margin:.2%}")
+            print(f"🏆 Competition level: {analysis.competition_level}")
+            
+            if analysis.best_opportunities:
+                print(f"\n💎 Top 3 Opportunities:")
+                for i, opp in enumerate(analysis.best_opportunities[:3], 1):
+                    print(f"  {i}. {opp.item_name}: {opp.profit_margin*100:.1f}% profit (Score: {opp.score:.2f})")
+        
+        print("✅ System trading analysis completed")
+    
+    async def run_local_market_analysis(self, system_name: str = "Jita", max_items: int = 25, **kwargs):
+        """Run local market analysis to become the most profitable trader in your system."""
+        print(f"🎯 Analyzing local market opportunities in {system_name}...")
+        
+        async with LocalMarketAnalyzer(system_name) as analyzer:
+            analysis = await analyzer.analyze_local_market(max_items=max_items)
+            analyzer.display_local_analysis(analysis)
+            analyzer.export_local_analysis(analysis)
+            
+            print(f"\n🎯 Local Market Analysis Complete!")
+            print(f"📊 Found {analysis.total_opportunities} opportunities in {analysis.system_name}")
+            print(f"💰 Average profit margin: {analysis.avg_profit_margin:.2%}")
+            print(f"🏆 Market health: {analysis.market_health}")
+            print(f"🎯 Competition level: {analysis.competition_level}")
+            
+            if analysis.best_opportunities:
+                print(f"\n💎 Top 3 Local Opportunities:")
+                for i, opp in enumerate(analysis.best_opportunities[:3], 1):
+                    print(f"  {i}. {opp.item_name}: {opp.profit_margin*100:.1f}% profit ({opp.opportunity_type})")
+            
+            if analysis.strategic_recommendations:
+                print(f"\n🎯 Key Strategies for {system_name}:")
+                for i, rec in enumerate(analysis.strategic_recommendations[:3], 1):
+                    print(f"  {i}. {rec}")
+        
+        print("✅ Local market analysis completed")
+    
+    def run_jump_planning(self, origin: str = "Jita", destination: str = "Amarr", 
+                         cargo_volume: float = 500000, item_name: str = "Warrior II",
+                         quantity: int = 1000, buy_price: float = 4050, 
+                         sell_price: float = 5000):
+        """Run jump planning and transport efficiency analysis."""
+        print("🚀 Running jump planning and transport efficiency analysis...")
+        
+        planner = JumpPlanner()
+        
+        # Route analysis
+        print(f"\n📍 ROUTE ANALYSIS: {origin} → {destination}")
+        planner.display_route_analysis(origin, destination, cargo_volume)
+        
+        # Transport efficiency analysis
+        print(f"\n📦 TRANSPORT EFFICIENCY ANALYSIS")
+        efficiency = planner.analyze_transport_efficiency(
+            item_name=item_name,
+            quantity=quantity,
+            buy_price=buy_price,
+            sell_price=sell_price,
+            origin=origin,
+            destination=destination
+        )
+        planner.display_transport_efficiency(efficiency)
+        
+        # Ship comparison for different routes
+        print(f"\n🔄 SHIP COMPARISON FOR MULTIPLE ROUTES")
+        routes = [
+            ("Jita", "Dodixie", 200000),
+            ("Amarr", "Hek", 800000),
+            ("Dodixie", "Rens", 300000)
+        ]
+        
+        for route_origin, route_dest, route_volume in routes:
+            print(f"\n📍 {route_origin} → {route_dest} ({route_volume:,} m³)")
+            planner.display_route_analysis(route_origin, route_dest, route_volume)
+        
+        print("✅ Jump planning analysis completed")
     
     async def run_trading_system(self, cycles: int = 3):
         """Run integrated trading system."""
@@ -223,6 +366,24 @@ class EVETradingMaster:
             self.run_portfolio_demo()
         elif component == 'trading_system':
             await self.run_trading_system(**kwargs)
+        elif component == 'find_profitable':
+            await self.run_profitable_finder(**kwargs)
+        elif component == 'discover_items':
+            await self.run_dynamic_discovery(**kwargs)
+        elif component == 'system_trading':
+            await self.run_system_trading_analysis(**kwargs)
+        elif component == 'local_market':
+            await self.run_local_market_analysis(**kwargs)
+        elif component == 'jump_planning':
+            self.run_jump_planning(
+                origin=kwargs.get('origin', 'Jita'),
+                destination=kwargs.get('destination', 'Amarr'),
+                cargo_volume=kwargs.get('cargo_volume', 500000),
+                item_name=kwargs.get('item_name', 'Warrior II'),
+                quantity=kwargs.get('quantity', 1000),
+                buy_price=kwargs.get('buy_price', 4050),
+                sell_price=kwargs.get('sell_price', 5000)
+            )
         elif component == 'db_stats':
             self.show_db_stats()
         else:
@@ -255,10 +416,20 @@ def main():
     parser.add_argument('component', nargs='?', choices=['all'] + list(EVETradingMaster().components.keys()),
                        help='Component to run (or "all" for all components)')
     parser.add_argument('--type-id', type=int, default=34, help='Item type ID (default: 34 for Tritanium)')
-    parser.add_argument('--item-name', default='Tritanium', help='Item name (default: Tritanium)')
+    parser.add_argument('--item-name', default='Tritanium', help='Item name (default: Tritanium)', nargs='+')
     parser.add_argument('--port', type=int, default=5000, help='Web dashboard port (default: 5000)')
     parser.add_argument('--duration', type=int, default=10, help='Monitoring duration in minutes (default: 10)')
     parser.add_argument('--cycles', type=int, default=3, help='Trading cycles (default: 3)')
+    parser.add_argument('--system_id', type=int, default=60003760, help='Target system ID for analysis')
+    parser.add_argument('--system_name', type=str, default='Jita', help='Target system name for local analysis')
+    parser.add_argument('--max_items', type=int, default=30, help='Maximum items to analyze')
+    parser.add_argument('--min_score', type=float, default=0.4, help='Minimum score threshold')
+    parser.add_argument('--origin', type=str, default='Jita', help='Origin system for jump planning')
+    parser.add_argument('--destination', type=str, default='Amarr', help='Destination system for jump planning')
+    parser.add_argument('--cargo_volume', type=float, default=500000, help='Cargo volume in m³')
+    parser.add_argument('--quantity', type=int, default=1000, help='Item quantity for transport analysis')
+    parser.add_argument('--buy_price', type=float, default=4050, help='Buy price for transport analysis')
+    parser.add_argument('--sell_price', type=float, default=5000, help='Sell price for transport analysis')
     
     args = parser.parse_args()
     
@@ -277,10 +448,20 @@ def main():
         else:
             kwargs = {
                 'type_id': args.type_id,
-                'item_name': args.item_name,
+                'item_name': ' '.join(args.item_name) if isinstance(args.item_name, list) else args.item_name,
                 'port': args.port,
                 'duration_minutes': args.duration,
-                'cycles': args.cycles
+                'cycles': args.cycles,
+                'system_id': args.system_id,
+                'system_name': args.system_name,
+                'max_items': args.max_items,
+                'min_score': args.min_score,
+                'origin': args.origin,
+                'destination': args.destination,
+                'cargo_volume': args.cargo_volume,
+                'quantity': args.quantity,
+                'buy_price': args.buy_price,
+                'sell_price': args.sell_price
             }
             asyncio.run(master.run_component(args.component, **kwargs))
     
