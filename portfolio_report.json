@@ -1,0 +1,93 @@
+{
+  "summary": {
+    "initial_capital": 1000000,
+    "current_cash": 990737.65,
+    "total_portfolio_value": 1000997.65,
+    "total_cost": 9260.0,
+    "total_unrealized_pnl": 1000.0,
+    "total_realized_pnl": 125.00000000000009,
+    "total_pnl": 1125.0,
+    "total_return_pct": 0.11249999999999999,
+    "number_of_positions": 2,
+    "number_of_trades": 4
+  },
+  "performance_metrics": {
+    "avg_daily_return": -0.00124190904516184,
+    "volatility": 0.0021560718487773946,
+    "sharpe_ratio": -0.5760054081064447,
+    "max_drawdown": 0.00552001367596999,
+    "total_return": -0.009262349999999977
+  },
+  "portfolio_items": [
+    {
+      "type_id": 34,
+      "item_name": "Tritanium",
+      "quantity": 1200,
+      "avg_price": 5.583333333333333,
+      "current_price": 6.25,
+      "total_cost": 6700.0,
+      "current_value": 7500.0,
+      "unrealized_pnl": 800.0,
+      "unrealized_pnl_pct": 11.940298507462686,
+      "last_updated": "2025-07-25T23:36:03.243133"
+    },
+    {
+      "type_id": 35,
+      "item_name": "Pyerite",
+      "quantity": 800,
+      "avg_price": 3.2,
+      "current_price": 3.45,
+      "total_cost": 2560.0,
+      "current_value": 2760.0,
+      "unrealized_pnl": 200.0,
+      "unrealized_pnl_pct": 7.8125,
+      "last_updated": "2025-07-25T23:36:03.243134"
+    }
+  ],
+  "trade_history": [
+    {
+      "trade_id": "20250720_233603_34_buy",
+      "type_id": 34,
+      "item_name": "Tritanium",
+      "action": "buy",
+      "quantity": 1000,
+      "price": 5.5,
+      "total_value": 5500.0,
+      "fees": 55.0,
+      "timestamp": "2025-07-20T23:36:03.243022"
+    },
+    {
+      "trade_id": "20250722_233603_34_buy",
+      "type_id": 34,
+      "item_name": "Tritanium",
+      "action": "buy",
+      "quantity": 500,
+      "price": 5.75,
+      "total_value": 2875.0,
+      "fees": 28.75,
+      "timestamp": "2025-07-22T23:36:03.243069"
+    },
+    {
+      "trade_id": "20250723_233603_35_buy",
+      "type_id": 35,
+      "item_name": "Pyerite",
+      "action": "buy",
+      "quantity": 800,
+      "price": 3.2,
+      "total_value": 2560.0,
+      "fees": 25.6,
+      "timestamp": "2025-07-23T23:36:03.243095"
+    },
+    {
+      "trade_id": "20250724_233603_34_sell",
+      "type_id": 34,
+      "item_name": "Tritanium",
+      "action": "sell",
+      "quantity": 300,
+      "price": 6.0,
+      "total_value": 1800.0,
+      "fees": 18.0,
+      "timestamp": "2025-07-24T23:36:03.243114"
+    }
+  ]
+}
