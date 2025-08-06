@@ -1,0 +1,32 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(source:*)",
+      "Bash(./venv/bin/python:*)",
+      "Bash(curl:*)",
+      "Bash(python3:*)",
+      "Bash(python:*)",
+      "Bash(npm run dev:*)",
+      "Bash(cat:*)",
+      "Bash(find:*)",
+      "Bash(ls:*)",
+      "Bash(mongo:*)",
+      "Bash(mongosh:*)",
+      "Bash(pip install:*)",
+      "Bash(npm install:*)",
+      "Bash(pkill:*)",
+      "Bash(kill:*)",
+      "Bash(/dev/null)",
+      "Bash(grep:*)",
+      "Bash(mv:*)",
+      "Bash(mkdir:*)",
+      "Bash(rm:*)",
+      "Bash(npm run build:*)",
+      "Bash(chmod:*)",
+      "Bash(./run_all.sh:*)",
+      "Bash(timeout:*)",
+      "Bash(pgrep:*)"
+    ],
+    "deny": []
+  }
+}

@@ -72,6 +72,29 @@ class SimpleDatabaseManager:
                 )
             ''')
             
+            # Create discovered_items table
+            cursor.execute('''
+                CREATE TABLE IF NOT EXISTS discovered_items (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    type_id INTEGER NOT NULL,
+                    name TEXT NOT NULL,
+                    category TEXT NOT NULL,
+                    subcategory TEXT NOT NULL,
+                    volume_24h INTEGER NOT NULL,
+                    avg_price REAL NOT NULL,
+                    profit_margin REAL NOT NULL,
+                    demand_score REAL NOT NULL,
+                    supply_score REAL NOT NULL,
+                    volatility_score REAL NOT NULL,
+                    competition_score REAL NOT NULL,
+                    overall_score REAL NOT NULL,
+                    market_activity TEXT NOT NULL,
+                    description TEXT,
+                    discovered_at TEXT NOT NULL,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                )
+            ''')
+            
             # Create indexes for better performance
             cursor.execute('CREATE INDEX IF NOT EXISTS idx_type_id ON market_orders(type_id)')
             cursor.execute('CREATE INDEX IF NOT EXISTS idx_location_id ON market_orders(location_id)')
@@ -79,6 +102,9 @@ class SimpleDatabaseManager:
             cursor.execute('CREATE INDEX IF NOT EXISTS idx_price ON market_orders(price)')
             cursor.execute('CREATE INDEX IF NOT EXISTS idx_order_type ON market_orders(order_type)')
             cursor.execute('CREATE INDEX IF NOT EXISTS idx_analysis_type_date ON market_analysis(type_id, analysis_date)')
+            cursor.execute('CREATE INDEX IF NOT EXISTS idx_discovered_type_id ON discovered_items(type_id)')
+            cursor.execute('CREATE INDEX IF NOT EXISTS idx_discovered_score ON discovered_items(overall_score)')
+            cursor.execute('CREATE INDEX IF NOT EXISTS idx_discovered_category ON discovered_items(category)')
             
             conn.commit()
     
@@ -341,6 +367,106 @@ class SimpleDatabaseManager:
                 'oldest_order': oldest_order,
                 'newest_order': newest_order
             }
+    
+    async def store_discovered_item(self, item_data: Dict[str, Any]) -> bool:
+        """
+        Store discovered item in the database.
+        
+        Args:
+            item_data: Dictionary containing item information
+            
+        Returns:
+            True if successful, False otherwise
+        """
+        try:
+            with self.get_connection() as conn:
+                cursor = conn.cursor()
+                
+                cursor.execute('''
+                    INSERT OR REPLACE INTO discovered_items (
+                        type_id, name, category, subcategory, volume_24h,
+                        avg_price, profit_margin, demand_score, supply_score,
+                        volatility_score, competition_score, overall_score,
+                        market_activity, description, discovered_at
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                ''', (
+                    item_data['type_id'],
+                    item_data['name'],
+                    item_data['category'],
+                    item_data['subcategory'],
+                    item_data['volume_24h'],
+                    item_data['avg_price'],
+                    item_data['profit_margin'],
+                    item_data['demand_score'],
+                    item_data['supply_score'],
+                    item_data['volatility_score'],
+                    item_data['competition_score'],
+                    item_data['overall_score'],
+                    item_data['market_activity'],
+                    item_data.get('description', ''),
+                    item_data['discovered_at']
+                ))
+                
+                conn.commit()
+                return True
+                
+        except Exception as e:
+            logger.error(f"Error storing discovered item {item_data.get('type_id', 'unknown')}: {e}")
+            return False
+    
+    def get_top_discovered_items(self, limit: int = 50, min_score: float = 0.5) -> pd.DataFrame:
+        """
+        Get top discovered items by overall score.
+        
+        Args:
+            limit: Maximum number of items to return
+            min_score: Minimum overall score threshold
+            
+        Returns:
+            DataFrame with discovered items
+        """
+        try:
+            with self.get_connection() as conn:
+                query = '''
+                    SELECT * FROM discovered_items 
+                    WHERE overall_score >= ? 
+                    ORDER BY overall_score DESC 
+                    LIMIT ?
+                '''
+                
+                df = pd.read_sql_query(query, conn, params=(min_score, limit))
+                return df
+                
+        except Exception as e:
+            logger.error(f"Error getting discovered items: {e}")
+            return pd.DataFrame()
+    
+    def get_discovered_items_by_category(self, category: str, limit: int = 20) -> pd.DataFrame:
+        """
+        Get discovered items by category.
+        
+        Args:
+            category: Item category
+            limit: Maximum number of items to return
+            
+        Returns:
+            DataFrame with discovered items
+        """
+        try:
+            with self.get_connection() as conn:
+                query = '''
+                    SELECT * FROM discovered_items 
+                    WHERE category = ? 
+                    ORDER BY overall_score DESC 
+                    LIMIT ?
+                '''
+                
+                df = pd.read_sql_query(query, conn, params=(category, limit))
+                return df
+                
+        except Exception as e:
+            logger.error(f"Error getting discovered items by category: {e}")
+            return pd.DataFrame()
 
 def main():
     """Demo function to test the database."""

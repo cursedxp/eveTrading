@@ -103,7 +103,22 @@ class DynamicItemDiscovery:
             logger.error(f"Error fetching market orders for {type_id}: {e}")
             return []
     
-    def calculate_profitability_score(self, orders: List[Dict]) -> Optional[MarketItem]:
+    async def get_item_name(self, type_id: int) -> str:
+        """Get item name from ESI API using type ID"""
+        try:
+            url = f"https://esi.evetech.net/latest/universe/types/{type_id}/?datasource=tranquility"
+            async with self.session.get(url) as response:
+                if response.status == 200:
+                    data = await response.json()
+                    return data.get('name', f'Item_{type_id}')
+                else:
+                    logger.warning(f"Failed to get item name for type_id {type_id}: {response.status}")
+                    return f'Item_{type_id}'
+        except Exception as e:
+            logger.error(f"Error fetching item name for {type_id}: {e}")
+            return f'Item_{type_id}'
+    
+    async def calculate_profitability_score(self, orders: List[Dict]) -> Optional[MarketItem]:
         """Calculate profitability score for an item"""
         if not orders:
             return None
@@ -116,8 +131,8 @@ class DynamicItemDiscovery:
             return None
         
         # Calculate metrics
-        current_sell_price = min(o['price'] for o in sell_orders)
-        current_buy_price = max(o['price'] for o in buy_orders)
+        current_buy_price = min(o['price'] for o in sell_orders)  # Lowest sell order (best price to buy)
+        current_sell_price = max(o['price'] for o in buy_orders)  # Highest buy order (best price to sell)
         avg_price = (current_sell_price + current_buy_price) / 2
         
         # Calculate volume
@@ -125,6 +140,15 @@ class DynamicItemDiscovery:
         
         # Calculate profit margin
         profit_margin = (current_sell_price - current_buy_price) / current_buy_price if current_buy_price > 0 else 0
+        
+        # VALIDATION: Sanity check for unrealistic profit margins
+        if profit_margin > 0.5:  # 50% profit margin
+            logger.warning(f"Unrealistic profit margin detected: {profit_margin:.2%} for type_id {orders[0]['type_id']}")
+            profit_margin = min(profit_margin, 0.5)
+        
+        if profit_margin < 0:
+            logger.warning(f"Negative profit margin detected: {profit_margin:.2%} for type_id {orders[0]['type_id']}")
+            profit_margin = 0
         
         # Calculate price change (simplified)
         price_change_24h = 0.05  # Placeholder - would need historical data
@@ -136,9 +160,13 @@ class DynamicItemDiscovery:
             min(1.0, abs(price_change_24h) * 10) * 0.3  # Volatility score
         )
         
+        # Get real item name from ESI API
+        type_id = orders[0]['type_id']
+        item_name = await self.get_item_name(type_id)
+        
         return MarketItem(
-            type_id=orders[0]['type_id'],
-            name="Unknown",  # Will be filled later
+            type_id=type_id,
+            name=item_name,
             category="Unknown",
             volume_24h=volume_24h,
             avg_price=avg_price,
@@ -246,7 +274,7 @@ class DynamicItemDiscovery:
                         continue
                     
                     # Calculate profitability
-                    market_item = self.calculate_profitability_score(orders)
+                    market_item = await self.calculate_profitability_score(orders)
                     if market_item and market_item.score >= min_score:
                         profitable_items.append(market_item)
                         self.discovered_items.add(type_id)
@@ -275,37 +303,76 @@ class DynamicItemDiscovery:
         results = {}
         for item in items:
             try:
-                # Get market orders and store in database
+                # First, store the discovered item metadata
+                item_data = {
+                    'type_id': item.type_id,
+                    'name': item.name,
+                    'category': item.category,
+                    'subcategory': "Unknown",
+                    'volume_24h': item.volume_24h,
+                    'avg_price': item.avg_price,
+                    'profit_margin': item.profit_margin,
+                    'demand_score': 0.5,  # Default values
+                    'supply_score': 0.5,
+                    'volatility_score': 0.5,
+                    'competition_score': 0.5,
+                    'overall_score': item.score,
+                    'market_activity': "Active",
+                    'description': f"Dynamically discovered profitable item",
+                    'discovered_at': datetime.now().isoformat()
+                }
+                await self.db.store_discovered_item(item_data)
+                
+                # Then, get market orders and store in database
                 orders = await self.get_market_orders_for_item(item.type_id)
                 if orders:
                     stored_count = self.db.store_market_orders(orders, item.type_id)
                     results[f"Item {item.type_id}"] = stored_count
                     logger.info(f"Stored {stored_count} orders for item {item.type_id} (Score: {item.score:.2f})")
+                else:
+                    results[f"Item {item.type_id}"] = 0
+                    
             except Exception as e:
                 logger.error(f"Error updating database for item {item.type_id}: {e}")
                 results[f"Item {item.type_id}"] = 0
         
         return results
     
-    def export_discovered_items(self, items: List[MarketItem], filename: str = "discovered_items.json"):
-        """Export discovered items to JSON"""
-        data = []
-        for item in items:
-            data.append({
-                'type_id': item.type_id,
-                'name': item.name,
-                'category': item.category,
-                'volume_24h': item.volume_24h,
-                'avg_price': item.avg_price,
-                'price_change_24h': item.price_change_24h,
-                'profit_margin': item.profit_margin,
-                'score': item.score
-            })
-        
-        with open(filename, 'w') as f:
-            json.dump(data, f, indent=2)
-        
-        logger.info(f"Discovered items exported to {filename}")
+    async def export_discovered_items_to_mongodb(self, items: List[MarketItem]):
+        """Export discovered items directly to MongoDB"""
+        try:
+            from mongodb_service import get_mongodb_service
+            mongo_service = get_mongodb_service()
+            collection = mongo_service.db["discovered_items"]
+            
+            documents = []
+            for item in items:
+                doc = {
+                    '_id': item.type_id,  # Use type_id as unique identifier
+                    'type_id': item.type_id,
+                    'name': item.name,
+                    'category': item.category,
+                    'volume_24h': item.volume_24h,
+                    'avg_price': item.avg_price,
+                    'price_change_24h': item.price_change_24h,
+                    'profit_margin': item.profit_margin,
+                    'overall_score': item.score,
+                    'discovered_at': datetime.now(),
+                    'last_updated': datetime.now()
+                }
+                documents.append(doc)
+            
+            # Use upsert to update existing items or insert new ones
+            for doc in documents:
+                collection.replace_one({'_id': doc['_id']}, doc, upsert=True)
+            
+            mongo_service.close()
+            logger.info(f"Discovered items exported to MongoDB: {len(documents)} items")
+            
+        except Exception as e:
+            logger.error(f"Error exporting to MongoDB: {e}")
+            # Fallback to database storage
+            await self.update_database_with_discovered_items(items)
     
     def display_discovered_items(self, items: List[MarketItem], top_n: int = 20):
         """Display discovered items in a formatted table"""
@@ -339,10 +406,10 @@ async def main():
             # Display results
             discoverer.display_discovered_items(items, top_n=15)
             
-            # Export results
-            discoverer.export_discovered_items(items)
+            # Export results to MongoDB (no more JSON files)
+            await discoverer.export_discovered_items_to_mongodb(items)
             
-            # Update database
+            # Also update the main database
             results = await discoverer.update_database_with_discovered_items(items)
             
             print("\n📊 Database Update Results:")
